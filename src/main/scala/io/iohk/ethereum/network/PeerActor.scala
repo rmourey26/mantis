@@ -1,7 +1,6 @@
 package io.iohk.ethereum.network
 
 import java.net.{InetSocketAddress, URI}
-
 import akka.actor.SupervisorStrategy.Escalate
 import akka.actor._
 import akka.util.ByteString
@@ -17,7 +16,7 @@ import io.iohk.ethereum.network.p2p._
 import io.iohk.ethereum.network.p2p.messages.WireProtocol._
 import io.iohk.ethereum.network.rlpx.RLPxConnectionHandler.RLPxConfiguration
 import io.iohk.ethereum.network.rlpx.{AuthHandshaker, RLPxConnectionHandler}
-import io.iohk.ethereum.utils.Logger
+import io.iohk.ethereum.utils.{ByteStringUtils, Logger}
 import org.bouncycastle.util.encoders.Hex
 
 /**
@@ -149,16 +148,27 @@ class PeerActor[R <: HandshakeResult](
   ): Unit =
     handshaker.nextMessage match {
       case Right(NextMessage(msgToSend, timeoutTime)) =>
+        log.info(
+          s"processHandshakerNextMessage Right(NextMessage(msgToSend, timeoutTime)) msgToSend $msgToSend remoteNodeId ${ByteStringUtils
+            .hash2string(remoteNodeId)}"
+        )
         rlpxConnection.sendMessage(msgToSend)
         val newTimeout = scheduler.scheduleOnce(timeoutTime, self, ResponseTimeout)
         context become processingHandshaking(handshaker, remoteNodeId, rlpxConnection, newTimeout, numRetries)
 
       case Left(HandshakeSuccess(handshakeResult)) =>
+        log.info(
+          s"processHandshakerNextMessage Left(HandshakeSuccess(handshakeResult)) handshakeResult $handshakeResult remoteNodeId ${ByteStringUtils
+            .hash2string(remoteNodeId)}"
+        )
         rlpxConnection.uriOpt.foreach { uri => knownNodesManager ! KnownNodesManager.AddKnownNode(uri) }
         context become new HandshakedPeer(remoteNodeId, rlpxConnection, handshakeResult).receive
         unstashAll()
 
       case Left(HandshakeFailure(reason)) =>
+        log.info(
+          s"processHandshakerNextMessage Left(HandshakeFailure(reason)) reason $reason remoteNodeId ${ByteStringUtils.hash2string(remoteNodeId)}"
+        )
         context.parent ! PeerClosedConnection(peerAddress.getHostString, reason)
         rlpxConnection.uriOpt.foreach { uri => knownNodesManager ! KnownNodesManager.RemoveKnownNode(uri) }
         disconnectFromPeer(rlpxConnection, reason)

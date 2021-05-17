@@ -37,7 +37,7 @@ class PeerDiscoveryManager(
     // perform further lookups as the items are pulled from it.
     randomNodes = Iterant
       .repeatEvalF {
-        Task.defer(service.lookup(randomNodeId))
+        Task.defer(service.getClosestNodes(randomNodeId))
       }
       .flatMap(ns => Iterant.fromList(ns.toList))
       .map(toNode)

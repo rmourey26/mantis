@@ -59,7 +59,9 @@
 
     <logger name="io.netty" level="WARN"/>
     <logger name="io.iohk.scalanet" level="INFO" />
-    <logger name="io.iohk.ethereum.blockchain.sync.SyncController" level="INFO" />
+    <logger name="io.iohk.scalanet.discovery.ethereum.v4.DiscoveryService" level="DEBUG" />
+    <logger name="io.iohk.ethereum.blockchain.sync.SyncController" level="DEBUG" />
+    <logger name="io.iohk.ethereum.blockchain.sync.regular.BlockImporter" level="DEBUG" />
     <logger name="io.iohk.ethereum.network.PeerActor" level="${LOGSLEVEL}" />
     <logger name="io.iohk.ethereum.network.rlpx.RLPxConnectionHandler" level="${LOGSLEVEL}" />
     <logger name="io.iohk.ethereum.vm.VM" level="OFF" />

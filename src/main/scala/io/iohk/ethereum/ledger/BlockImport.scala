@@ -6,7 +6,8 @@ import io.iohk.ethereum.domain._
 import io.iohk.ethereum.ledger.BlockExecutionError.{MPTError, ValidationBeforeExecError}
 import io.iohk.ethereum.ledger.BlockQueue.Leaf
 import io.iohk.ethereum.mpt.MerklePatriciaTrie.MissingNodeException
-import io.iohk.ethereum.utils.{ByteStringUtils, Logger}
+import io.iohk.ethereum.utils.Logger
+import io.iohk.ethereum.utils.ByteStringUtils._
 import monix.eval.Task
 import monix.execution.Scheduler
 import org.bouncycastle.util.encoders.Hex
@@ -37,7 +38,11 @@ class BlockImport(
     Task.parMap2(validationResult, importResult) { case (validationResult, importResult) =>
       validationResult.fold(
         error => {
-          log.error("Error while validation block before execution: {}", error.reason)
+          log.error(
+            "Error while validating block before execution: {}. Block hash: {}",
+            error.reason,
+            block.hash.toHex
+          )
           handleImportTopValidationError(error, block, importResult)
         },
         _ => importResult
@@ -146,7 +151,7 @@ class BlockImport(
     *        (oldBranch, newBranch) as lists of blocks
     */
   private def reorganiseChainFromQueue(queuedLeaf: ByteString): BlockImportResult = {
-    log.debug("Reorganising chain from leaf {}", ByteStringUtils.hash2string(queuedLeaf))
+    log.debug("Reorganising chain from leaf {}", hash2string(queuedLeaf))
     val newBranch = blockQueue.getBranch(queuedLeaf, dequeue = true)
     val bestNumber = blockchain.getBestBlockNumber()
 
@@ -158,7 +163,7 @@ class BlockImport(
       log.debug(
         "Removing blocks starting from number {} and parent {}",
         bestNumber,
-        ByteStringUtils.hash2string(parentHash)
+        hash2string(parentHash)
       )
       val oldBlocksData = removeBlocksUntil(parentHash, bestNumber)
       oldBlocksData.foreach(block => blockQueue.enqueueBlock(block.block))

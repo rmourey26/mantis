@@ -5,7 +5,7 @@ import cats.data.NonEmptyList
 import io.iohk.ethereum.consensus.Consensus
 import io.iohk.ethereum.domain._
 import io.iohk.ethereum.utils.Config.SyncConfig
-import io.iohk.ethereum.utils.{BlockchainConfig, Logger}
+import io.iohk.ethereum.utils.{BlockchainConfig, ByteStringUtils, Logger}
 import io.iohk.ethereum.vm._
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -127,6 +127,7 @@ class LedgerImpl(
             .map(_ => DuplicateBlock)
         } else {
           val hash = bestBlock.header.hash
+          log.info(s"importing block with hash ${ByteStringUtils.hash2string(hash)}")
           blockchain.getChainWeightByHash(hash) match {
             case Some(weight) =>
               val importResult = if (isPossibleNewBestBlock(block.header, bestBlock.header)) {

@@ -67,12 +67,12 @@ abstract class BaseNode extends Node {
 
     startSyncController()
 
-    startConsensus()
-
     startDiscoveryManager()
 
     startJsonRpcHttpServer()
     startJsonRpcIpcServer()
+
+    startConsensus()
   }
 
   override def shutdown(): Unit = {
