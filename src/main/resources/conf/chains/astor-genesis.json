@@ -1,10 +1,9 @@
 {
-  "difficulty": "0x10000000000",
-  "extraData": "0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa",
-  "gasLimit": "0x1fffffffffffff",
-  "nonce": "0x42",
-  "ommersHash": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+  "nonce": "0x0000000000000042",
   "timestamp": "0x0",
+  "extraData": "0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa",
+  "difficulty": "0x10000000000",
+  "gasLimit": "0x1fffffffffffff",
   "coinbase": "0x0000000000000000000000000000000000000000",
   "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "alloc": {
