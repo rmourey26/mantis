@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:xenial-20210416
 
 # This "base" image contains the base OS along with some extra programs.
 
